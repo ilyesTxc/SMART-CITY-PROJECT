@@ -14,7 +14,7 @@
 Batiment batiments[MAX_BATIMENTS];
 Equipement equipements[MAX_EQUIPEMENTS];
 TypeEquipement types[MAX_TYPES];
-Consommation consommations[MAX_CONSUMMATIONS];
+Consommation consommations[MAX_CONSOMMATIONS];
 
 int nbBatiments = 0;
 int nbEquipements = 0;
