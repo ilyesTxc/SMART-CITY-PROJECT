@@ -6,12 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define MAX_EQUIPEMENTS 300
-
-// Déclarations externes
-extern Equipement equipements[MAX_EQUIPEMENTS];
-extern int nbEquipements;
 
 // Structure représentant un équipement électrique
 
@@ -25,6 +22,10 @@ typedef struct {
     time_t debut_utilisation;
 } Equipement;
 
+// Déclarations externes
+extern Equipement equipements[MAX_EQUIPEMENTS];
+extern int nbEquipements;
+
 // Fonctions de gestion des équipements
 
 void ajouterEquipement();
@@ -32,6 +33,8 @@ void modifierEquipement();
 void supprimerEquipement();
 void afficherEquipements();
 void afficherEquipementsParBatiment();
+//
 void afficherEquipementsParType();
+void sauvegarderEquipementsDansFichier();
 
 #endif 

@@ -87,3 +87,13 @@ void gererEquipementsBatiment() {
     printf("Gestion des équipements d'un bâtiment (fonction à compléter)...\n");
 }
 
+// Recherche d'un bâtiment par son ID : retourne l'indice dans le tableau ou -1 si non trouvé
+int rechercheBatimentParId(int id) {
+    for (int i = 0; i < nbBatiments; i++) {
+        if (batiments[i].id_batiment == id) {
+            return i;
+        }
+    }
+    return -1;
+}
+

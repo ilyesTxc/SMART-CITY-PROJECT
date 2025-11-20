@@ -1,5 +1,3 @@
-/* main.c */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,16 +8,8 @@
 #include "utilisation.h"
 #include "statistiques.h"
 
-/* Tableaux statiques pour stocker les entités */
-Batiment batiments[MAX_BATIMENTS];
-Equipement equipements[MAX_EQUIPEMENTS];
-TypeEquipement types[MAX_TYPES];
-Consommation consommations[MAX_CONSOMMATIONS];
-
-int nbBatiments = 0;
-int nbEquipements = 0;
-int nbTypes = 0;
-int nbConsommations = 0;
+/* The concrete storage and counters are defined in their modules.
+    main uses the extern declarations from the headers. */
 
 /* Prototypes des fonctions de menu */
 void gestionBatiments();
@@ -109,23 +99,21 @@ void utilisationEquipements() {
         printf("\n=== UTILISATION DES ÉQUIPEMENTS ÉLECTRIQUES ===\n");
         printf("1. Allumer un équipement\n");
         printf("2. Éteindre un équipement\n");
-        printf("3. Afficher les consommations enregistrées\n");
-        printf("4. Afficher les équipements d'un bâtiment et leur état\n");
+        printf("3. Afficher L'etat des equipements\n");
         printf("0. Retour au menu principal\n");
         printf("Entrez votre choix: ");
         scanf("%d", &choix);
         switch (choix) {
             case 1: allumerEquipement(); break;
             case 2: eteindreEquipement(); break;
-            case 3: afficherConsommationsEnregistrees(); break;
-            case 4: afficherEquipementsEtatBatiment(); break;
+            case 3: afficherEtatEquipements(); break;
             case 0: break;
             default: printf("Choix invalide. Veuillez réessayer.\n"); break;
         }
     } while (choix != 0);
 }
 
-/* Menu de statistiques */
+/* Menu de statistiques
 void statistiquesMenu() {
     int choix;
     do {
@@ -151,3 +139,5 @@ void statistiquesMenu() {
         }
     } while (choix != 0);
 }
+
+ */

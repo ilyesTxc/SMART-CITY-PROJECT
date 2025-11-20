@@ -100,15 +100,21 @@ void afficherEquipementsParType() {
 }
 
 // affichage des équipements par batiment
-
-void afficherEquipementsParBatiment() {
-    int idB;
-    printf("ID du bâtiment: ");
-    scanf("%d", &idB);
-    printf("\n=== Équipements du bâtiment %d ===\n", idB);
+// affichage de tous les équipements
+void afficherEquipements() {
+    printf("\n=== Tous les équipements ===\n");
     for (int i = 0; i < nbEquipements; i++) {
-        if (equipements[i].idBatiment == idB)
-            printf("ID: %d | Nom: %s | Etat: %s\n", equipements[i].id, equipements[i].nom,
-                   equipements[i].etat ? "Allumé" : "Éteint");
+        printf("ID: %d | Nom: %s | Type ID: %d | Batiment ID: %d | Etat: %s\n",
+               equipements[i].id, equipements[i].nom, equipements[i].idType,
+               equipements[i].idBatiment, equipements[i].etat ? "Allumé" : "Éteint");
     }
+}
+// affichage des équipements par batiment
+
+// Sauvegarde simple des équipements dans un fichier binaire
+void sauvegarderEquipementsDansFichier() {
+    FILE *f = fopen("equipements.dat", "wb");
+    if (!f) return;
+    fwrite(equipements, sizeof(Equipement), nbEquipements, f);
+    fclose(f);
 }
