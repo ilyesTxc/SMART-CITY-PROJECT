@@ -1,29 +1,121 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "batiment.h"
-#include "equipement.h"
-#include "type_equipement.h"
-#include "consommation.h"
-#include "utilisation.h"
-#include "statistiques.h"
+#include "fonctions.h"
 
-/* The concrete storage and counters are defined in their modules.
-    main uses the extern declarations from the headers. */
 
-/* Prototypes des fonctions de menu */
-void gestionBatiments();
-void gestionEquipements();
-void utilisationEquipements();
-void statistiquesMenu();
 
+
+
+
+/* Menu de gestion des b�timents */
+void gestionBatiments() {
+    int choix;
+    do {
+        printf("\n=== GESTION DES B�TIMENTS ===\n");
+        printf("1. Ajouter un b�timent\n");
+        printf("2. Modifier un b�timent\n");
+        printf("3. Supprimer un b�timent\n");
+        printf("4. Afficher la liste des b�timents\n");
+        printf("5. Recherche d'un batiment selon l'id\n");
+        printf("6.Recherche d'un batiment selon le nom");
+        printf("0. Retour au menu principal\n");
+        printf("Entrez votre choix: ");
+        scanf("%d", &choix);
+        switch (choix) {
+            case 1: saisie_tab_batiment(); break;
+            case 2: modifier_tab_batiment(); break;
+            case 3: supprimer_batiment(); break;
+            case 4: affiche_tab_batiment(); break;
+            case 5: recherche_id_batiment(); break;
+            case 6: recherche_nom_batiment();break;
+            case 0: break;
+            default: printf("Choix invalide. Veuillez r�essayer.\n"); break;
+        }
+    } while (choix != 0);
+}
+
+/* Menu de gestion des �quipements */
+void gestionEquipements() {
+    int choix;
+    do {
+        printf("\n=== GESTION DES �QUIPEMENTS �LECTRIQUES ===\n");
+        printf("1. Ajouter un �quipement\n");
+        printf("2. Modifier un �quipement\n");
+        printf("3. Supprimer un �quipement\n");
+        printf("4. Afficher tous les �quipements\n");
+        printf("5. Recherche des equipements selon l'id \n");
+        printf("6. Recherche des equipements selon le nom\n");
+        printf("0. Retour au menu principal\n");
+        printf("Entrez votre choix: ");
+        scanf("%d", &choix);
+        switch (choix) {
+            case 1: saisie_tab_equipement(); break;
+            case 2: modifier_tab_equipement(); break;
+            case 3: supprimer_equipement(); break;
+            case 4: affiche_tab_equipement(); break;
+            case 5: recherche_id_equipement(); break;
+            case 6: recherche_nom_equipemnt(); break;
+            case 0: break;
+            default: printf("Choix invalide. Veuillez r�essayer.\n"); break;
+        }
+    } while (choix != 0);
+}
+int utilisationEquipements(){
+   Consommation consoList[MAX_CONSO];
+    int nbConso = 0;
+
+    int choix;
+    int idEquipement;
+    time_t debut;
+    float tauxConsommation;
+
+    do {
+        printf("\n=== GESTION DES CONSOMMATIONS ===\n");
+        printf("1. Allumer un �quipement\n");
+        printf("2. Eteindre un �quipement\n");
+        printf("3. Afficher les consommations\n");
+        printf("4. Quitter\n");
+        printf("Choix: ");
+        scanf("%d", &choix);
+
+        switch (choix) {
+            case 1:
+                printf("ID de l'equipement: ");
+                scanf("%d", &idEquipement);
+                printf("Taux de consommation (kWh/h): ");
+                scanf("%f", &tauxConsommation);
+                allumerEquipement(idEquipement, &debut);
+                break;
+
+            case 2:
+                printf("ID de l'equipement: ");
+                scanf("%d", &idEquipement);
+                eteindreEquipement(idEquipement, debut, consoList, &nbConso, tauxConsommation);
+                break;
+
+            case 3:
+                afficherConsommations(consoList, nbConso);
+                break;
+
+            case 4:
+                printf("Au revoir!\n");
+                break;
+
+            default:
+                printf("Choix invalide!\n");
+        }
+    } while (choix != 4);
+
+    return 0;
+}
 int main() {
     int choix;
     do {
-        printf("\n===== MENU PRINCIPAL - CITÉ INTELLIGENTE =====\n");
-        printf("1. Gestion des bâtiments\n");
-        printf("2. Gestion des équipements électriques\n");
-        printf("3. Utilisation des équipements électriques\n");
+        printf("\n===== MENU PRINCIPAL - CITE INTELLIGENTE =====\n");
+        printf("1. Gestion des batiments\n");
+        printf("2. Gestion des equipements electriques\n");
+        printf("3. Utilisation des equipements electriques\n");
         printf("4. Statistiques\n");
         printf("0. Quitter\n");
         printf("Entrez votre choix: ");
@@ -32,112 +124,10 @@ int main() {
             case 1: gestionBatiments(); break;
             case 2: gestionEquipements(); break;
             case 3: utilisationEquipements(); break;
-            case 4: statistiquesMenu(); break;
+            case 4: printf("les statistiques sera disponible bintot"); break;
             case 0: printf("Sortie de l'application...\n"); break;
-            default: printf("Choix invalide. Veuillez réessayer.\n"); break;
+            default: printf("Choix invalide. Veuillez r�essayer.\n"); break;
         }
     } while (choix != 0);
     return 0;
 }
-
-/* Menu de gestion des bâtiments */
-void gestionBatiments() {
-    int choix;
-    do {
-        printf("\n=== GESTION DES BÂTIMENTS ===\n");
-        printf("1. Ajouter un bâtiment\n");
-        printf("2. Modifier un bâtiment\n");
-        printf("3. Supprimer un bâtiment\n");
-        printf("4. Afficher la liste des bâtiments\n");
-        printf("5. Gérer les équipements d'un bâtiment\n");
-        printf("0. Retour au menu principal\n");
-        printf("Entrez votre choix: ");
-        scanf("%d", &choix);
-        switch (choix) {
-            case 1: ajouterBatiment(); break;
-            case 2: modifierBatiment(); break;
-            case 3: supprimerBatiment(); break;
-            case 4: afficherBatiments(); break;
-            case 5: gererEquipementsBatiment(); break;
-            case 0: break;
-            default: printf("Choix invalide. Veuillez réessayer.\n"); break;
-        }
-    } while (choix != 0);
-}
-
-/* Menu de gestion des équipements */
-void gestionEquipements() {
-    int choix;
-    do {
-        printf("\n=== GESTION DES ÉQUIPEMENTS ÉLECTRIQUES ===\n");
-        printf("1. Ajouter un équipement\n");
-        printf("2. Modifier un équipement\n");
-        printf("3. Supprimer un équipement\n");
-        printf("4. Afficher tous les équipements\n");
-        printf("5. Afficher les équipements par bâtiment\n");
-        printf("6. Afficher les équipements par type\n");
-        printf("0. Retour au menu principal\n");
-        printf("Entrez votre choix: ");
-        scanf("%d", &choix);
-        switch (choix) {
-            case 1: ajouterEquipement(); break;
-            case 2: modifierEquipement(); break;
-            case 3: supprimerEquipement(); break;
-            case 4: afficherEquipements(); break;
-            case 5: afficherEquipementsParBatiment(); break;
-            case 6: afficherEquipementsParType(); break;
-            case 0: break;
-            default: printf("Choix invalide. Veuillez réessayer.\n"); break;
-        }
-    } while (choix != 0);
-}
-
-/* Menu d'utilisation des équipements */
-void utilisationEquipements() {
-    int choix;
-    do {
-        printf("\n=== UTILISATION DES ÉQUIPEMENTS ÉLECTRIQUES ===\n");
-        printf("1. Allumer un équipement\n");
-        printf("2. Éteindre un équipement\n");
-        printf("3. Afficher L'etat des equipements\n");
-        printf("0. Retour au menu principal\n");
-        printf("Entrez votre choix: ");
-        scanf("%d", &choix);
-        switch (choix) {
-            case 1: allumerEquipement(); break;
-            case 2: eteindreEquipement(); break;
-            case 3: afficherEtatEquipements(); break;
-            case 0: break;
-            default: printf("Choix invalide. Veuillez réessayer.\n"); break;
-        }
-    } while (choix != 0);
-}
-
-/* Menu de statistiques
-void statistiquesMenu() {
-    int choix;
-    do {
-        printf("\n=== STATISTIQUES ===\n");
-        printf("1. Statistiques par équipement\n");
-        printf("2. Statistiques par bâtiment\n");
-        printf("3. Statistiques par type d'équipement\n");
-        printf("4. Statistiques sur intervalle de temps\n");
-        printf("5. Trier les consommations\n");
-        printf("6. Recherche par nom (équipement, bâtiment ou type)\n");
-        printf("0. Retour au menu principal\n");
-        printf("Entrez votre choix: ");
-        scanf("%d", &choix);
-        switch (choix) {
-            case 1: statistiquesParEquipement(); break;
-            case 2: statistiquesParBatiment(); break;
-            case 3: statistiquesParType(); break;
-            case 4: statistiquesIntervalleTemps(); break;
-            case 5: trierConsommations(); break;
-            case 6: rechercheParNom(); break;
-            case 0: break;
-            default: printf("Choix invalide. Veuillez réessayer.\n"); break;
-        }
-    } while (choix != 0);
-}
-
- */
