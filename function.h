@@ -1,3 +1,26 @@
+// Structure Date & Adresse
+
+#ifndef DATE_ADRESSE_H
+#define DATE_ADRESSE_H
+
+#include <stdio.h>
+#include <string.h>
+
+typedef struct{
+    int jour;
+    int mois;
+    int annee;
+}Date;
+
+typedef struct{
+    char rue[100];
+    char ville[50];
+    char code_postal[10];
+}Adresse;
+
+#endif
+
+
 
 // BATIMENTS
 
@@ -10,6 +33,7 @@
 
 #define MAX_BATIMENTS 100
 #define MAX_EQUIP_PAR_BATIMENT 300
+
 
 // Structure représentant un bâtiment 
 
@@ -122,10 +146,11 @@ typedef struct {
 
 // Fonctions de gestion des consommations
 
-void ajouterConsommation(int idEquip, time_t debut, time_t fin, float conso);
+void ajouterConsommation();
 void afficherConsommations();
 void trierConsommationsCroissant();
 void trierConsommationsDecroissant();
+
 
 #endif 
 

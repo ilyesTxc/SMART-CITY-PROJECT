@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "function.h"
+#include <time.h>
 
 Batiment batiments[MAX_BATIMENTS];
 int nbBatiments = 0;
@@ -81,11 +82,6 @@ void afficherBatiments() {
     }
 }
 
-// gestion des équipements d'un bâtiment
-
-void gererEquipementsBatiment() {
-    printf("Gestion des équipements d'un bâtiment (fonction à compléter)...\n");
-}
 
 // Recherche d'un bâtiment par son ID : retourne l'indice dans le tableau ou -1 si non trouvé
 int rechercheBatimentParId(int id) {
@@ -195,8 +191,8 @@ void afficherEquipementsParType() {
     }
 }
 
-// affichage des équipements par batiment
 // affichage de tous les équipements
+
 void afficherEquipements() {
     printf("\n=== Tous les équipements ===\n");
     for (int i = 0; i < nbEquipements; i++) {
@@ -276,74 +272,6 @@ void afficherTypeEquipements() {
     }
 }
 
-Consommation consommations[MAX_CONSOMMATIONS];
-int nbConsommations = 0;
-
-// ajouter consommation
-
-void ajouterConsommation(int idEquip, time_t debut, time_t fin, float conso) {
-    if (nbConsommations >= MAX_CONSOMMATIONS) {
-        printf("Nombre maximum de consommations atteint.\n");
-        return;
-    }
-    Consommation c;
-    c.id = (nbConsommations == 0) ? 1 : consommations[nbConsommations-1].id + 1;
-    c.idEquipement = idEquip;
-    c.debut = debut;
-    c.fin = fin;
-    c.consommation = conso;
-    consommations[nbConsommations++] = c;
-    printf("Consommation ajoutée pour l'équipement %d: %.2f\n", idEquip, conso);
-}
-
-// afficher consommations
-
-void afficherConsommations() {
-    printf("\n=== Consommations enregistrées ===\n");
-    for (int i = 0; i < nbConsommations; i++) {
-        struct tm *debut_tm = localtime(&consommations[i].debut);
-        struct tm *fin_tm = localtime(&consommations[i].fin);
-        printf("ID: %d | Equipement ID: %d | Début: %02d/%02d/%04d %02d:%02d:%02d | Fin: %02d/%02d/%04d %02d:%02d:%02d | Consommation: %.2f\n",
-               consommations[i].id, consommations[i].idEquipement,
-               debut_tm->tm_mday, debut_tm->tm_mon+1, debut_tm->tm_year+1900,
-               debut_tm->tm_hour, debut_tm->tm_min, debut_tm->tm_sec,
-               fin_tm->tm_mday, fin_tm->tm_mon+1, fin_tm->tm_year+1900,
-               fin_tm->tm_hour, fin_tm->tm_min, fin_tm->tm_sec,
-               consommations[i].consommation);
-    }
-}
-
-// Trier consommations croissant (Tri par sélection)
-
-void trierConsommationsCroissant() {
-    for(int i=0;i<nbConsommations-1;i++){
-        for(int j=i+1;j<nbConsommations;j++){
-            if(consommations[i].consommation > consommations[j].consommation){
-                Consommation temp = consommations[i];
-                consommations[i] = consommations[j];
-                consommations[j] = temp;
-            }
-        }
-    }
-    printf("Consommations triées par ordre croissant.\n");
-}
-
-// Trier consommations décroissant (Tri par sélection)
-
-void trierConsommationsDecroissant() {
-    for(int i=0;i<nbConsommations-1;i++){
-        for(int j=i+1;j<nbConsommations;j++){
-            if(consommations[i].consommation < consommations[j].consommation){
-                Consommation temp = consommations[i];
-                consommations[i] = consommations[j];
-                consommations[j] = temp;
-            }
-        }
-    }
-    printf("Consommations triées par ordre décroissant.\n");
-}
-
-
 // UTILISATION_DES_EQUIPEMENTS
 
 void allumerEquipement() {
@@ -395,7 +323,203 @@ void afficherEtatEquipements() {
     }
 }
 
-// Menu de statistiques (stub: placeholder so main2 links)
-void statistiquesMenu() {
-    printf("Menu statistiques non implémenté.\n");
+
+// Statistiques 
+
+void statistiquesIntervalleTemps() {
+    if (nbConsommations == 0) {
+        printf("Aucune consommation enregistrée.\n");
+        return;
+    }
+
+    int annee, mois, jour, heure, minute;
+
+    printf("Date de début:\n");
+    printf("Année: "); scanf("%d", &annee);
+    printf("Mois: "); scanf("%d", &mois);
+    printf("Jour: "); scanf("%d", &jour);
+    printf("Heure: "); scanf("%d", &heure);
+    printf("Minute: "); scanf("%d", &minute);
+
+    struct tm debut_tm = {0};
+
+    debut_tm.tm_year = annee - 1900;
+    debut_tm.tm_mon = mois - 1;
+    debut_tm.tm_mday = jour;
+    debut_tm.tm_hour = heure;
+    debut_tm.tm_min = minute;
+
+    time_t debut = mktime(&debut_tm);
+
+    printf("Date de fin:\n");
+    printf("Année: "); scanf("%d", &annee);
+    printf("Mois: "); scanf("%d", &mois);
+    printf("Jour: "); scanf("%d", &jour);
+    printf("Heure: "); scanf("%d", &heure);
+    printf("Minute: "); scanf("%d", &minute);
+
+    struct tm fin_tm = {0};
+    
+    fin_tm.tm_year = annee - 1900;
+    fin_tm.tm_mon = mois - 1;
+    fin_tm.tm_mday = jour;
+    fin_tm.tm_hour = heure;
+    fin_tm.tm_min = minute;
+
+    time_t fin = mktime(&fin_tm);
+
+    float totalConso = 0;
+    int nbUtilisations = 0;
+
+    for (int i = 0; i < nbConsommations; i++) {
+        if (consommations[i].debut >= debut && consommations[i].fin <= fin) {
+            totalConso += consommations[i].consommation;
+            nbUtilisations++;
+        }
+    }
+
+    printf("\n=== STATISTIQUES SUR INTERVALLE DE TEMPS ===\n");
+
+    printf("\nRésultats pour l'intervalle spécifié:\n");
+    printf("  - Consommation totale: %.2f\n", totalConso);
+    printf("  - Nombre d'utilisations: %d\n", nbUtilisations);
+    printf("  - Consommation moyenne par utilisation: %.2f\n",
+           nbUtilisations > 0 ? totalConso / nbUtilisations : 0);
 }
+
+Consommation consommations[MAX_CONSOMMATIONS];
+int nbConsommations = 0;
+
+// ajouter consommation
+
+void ajouterConsommation() {
+    if (nbConsommations >= MAX_CONSOMMATIONS) {
+        printf("Nombre maximum de consommations atteint.\n");
+        return;
+    }
+
+    Consommation c;
+
+    c.id = (nbConsommations == 0) ? 1 : consommations[nbConsommations - 1].id + 1;
+
+    int valid = 0;
+    do {
+        printf("ID de l'équipement: ");
+        scanf("%d", &c.idEquipement);
+
+        valid = 0;
+        for (int i = 0; i < nbEquipements; i++) {
+            if (equipements[i].id == c.idEquipement) {
+                valid = 1;
+                break;
+            }
+        }
+        if (!valid) {
+            printf("ID invalide. Veuillez entrer un ID d'équipement existant.\n");
+        }
+    } while (!valid);
+
+
+    int annee, mois, jour, heure, minute;
+    printf("Date de début:\n");
+    printf("Année: "); scanf("%d", &annee);
+    printf("Mois: "); scanf("%d", &mois);
+    printf("Jour: "); scanf("%d", &jour);
+    printf("Heure: "); scanf("%d", &heure);
+    printf("Minute: "); scanf("%d", &minute);
+
+    struct tm debut_tm = {0};
+    debut_tm.tm_year = annee - 1900;
+    debut_tm.tm_mon  = mois - 1;
+    debut_tm.tm_mday = jour;
+    debut_tm.tm_hour = heure;
+    debut_tm.tm_min  = minute;
+    c.debut = mktime(&debut_tm);
+
+    printf("Date de fin:\n");
+    printf("Année: "); scanf("%d", &annee);
+    printf("Mois: "); scanf("%d", &mois);
+    printf("Jour: "); scanf("%d", &jour);
+    printf("Heure: "); scanf("%d", &heure);
+    printf("Minute: "); scanf("%d", &minute);
+
+    struct tm fin_tm = {0};
+    fin_tm.tm_year = annee - 1900;
+    fin_tm.tm_mon  = mois - 1;
+    fin_tm.tm_mday = jour;
+    fin_tm.tm_hour = heure;
+    fin_tm.tm_min  = minute;
+    c.fin = mktime(&fin_tm);
+    printf("Consommation (kWh ou unité): ");
+    scanf("%f", &c.consommation);
+
+    consommations[nbConsommations++] = c;
+
+    printf("Consommation ajoutée pour l'équipement %d: %.2f\n", c.idEquipement, c.consommation);
+}
+
+
+// afficher consommations
+
+void afficherConsommations() {
+    printf("\n=== Consommations enregistrées ===\n");
+    for (int i = 0; i < nbConsommations; i++) {
+        struct tm *debut_tm = localtime(&consommations[i].debut);
+        struct tm *fin_tm = localtime(&consommations[i].fin);
+        printf("ID: %d | Equipement ID: %d | Début: %02d/%02d/%04d %02d:%02d:%02d | Fin: %02d/%02d/%04d %02d:%02d:%02d | Consommation: %.2f\n",
+               consommations[i].id, consommations[i].idEquipement,
+               debut_tm->tm_mday, debut_tm->tm_mon+1, debut_tm->tm_year+1900,
+               debut_tm->tm_hour, debut_tm->tm_min, debut_tm->tm_sec,
+               fin_tm->tm_mday, fin_tm->tm_mon+1, fin_tm->tm_year+1900,
+               fin_tm->tm_hour, fin_tm->tm_min, fin_tm->tm_sec,
+               consommations[i].consommation);
+    }
+}
+
+// TRIER_LES_CONSOMMATIONS
+
+// Tri simple des consommations
+
+
+
+void trierConsommationsAsc() {
+    if (nbConsommations < 2) return;
+    for (int i = 0; i < nbConsommations - 1; i++) {
+        int min_idx = i;
+        for (int j = i + 1; j < nbConsommations; j++) {
+            if (consommations[j].consommation < consommations[min_idx].consommation) {
+                min_idx = j;
+            }
+        }
+        if (min_idx != i) {
+            Consommation tmp = consommations[i];
+            consommations[i] = consommations[min_idx];
+            consommations[min_idx] = tmp;
+        }
+    }
+    printf("Consommations triées (ascendant)\n");
+}
+
+
+// Tri par ordre décroissant (descendant)
+
+void trierConsommationsDesc() {
+    if (nbConsommations < 2) return;
+    for (int i = 0; i < nbConsommations - 1; i++) {
+        int max_idx = i;
+        for (int j = i + 1; j < nbConsommations; j++) {
+            if (consommations[j].consommation > consommations[max_idx].consommation) {
+                max_idx = j;
+            }
+        }
+        if (max_idx != i) {
+            Consommation tmp = consommations[i];
+            consommations[i] = consommations[max_idx];
+            consommations[max_idx] = tmp;
+        }
+    }
+    printf("Consommations triées (descendant)\n");
+}
+
+
+

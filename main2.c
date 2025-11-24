@@ -9,6 +9,9 @@ void gestionBatiments();
 void gestionEquipements();
 void utilisationEquipements();
 void statistiquesMenu();
+void Consommations();
+void MenuDeTrie();
+void statistiquesIntervalleTemps();
 
 int main() {
     int choix;
@@ -17,7 +20,9 @@ int main() {
         printf("1. Gestion des bâtiments\n");
         printf("2. Gestion des équipements électriques\n");
         printf("3. Utilisation des équipements électriques\n");
-        printf("4. Statistiques\n");
+        printf("4. Statistiques sur intervalle de temps\n");
+        printf("5. Statistiques des consommations Triée : decroissante ou croissante\n");
+        printf("6. Consommations\n");
         printf("0. Quitter\n");
         printf("Entrez votre choix:");
         scanf("%d", &choix);
@@ -25,6 +30,9 @@ int main() {
             case 1: gestionBatiments(); break;
             case 2: gestionEquipements(); break;
             case 3: utilisationEquipements(); break;
+            case 4: statistiquesIntervalleTemps(); break;
+            case 5: MenuDeTrie(); break;
+            case 6: Consommations(); break;
             case 0: printf("Sortie de l'application...\n"); break;
             default: printf("Choix invalide. Veuillez réessayer.\n"); break;
         }
@@ -104,3 +112,25 @@ void utilisationEquipements() {
         }
     } while (choix != 0);
 }
+
+void Consommations(){
+    int choix;
+    do{
+        printf("\n=== CONSOMMATIONS ===\n");
+        printf("1. Ajouter une consommation\n");
+        printf("2. Afficher une consommation\n");
+        printf("3. Retour au menu principal\n");
+        scanf("%d",&choix);
+        switch(choix){
+            case 1: ajouterConsommation(); break;
+            case 2: afficherConsommations(); break;
+            case 0: break;
+            default: printf("Choix invalide. Veuillez réessayer.\n"); break;
+        }
+    } while(choix != 0);
+}
+
+
+
+
+
