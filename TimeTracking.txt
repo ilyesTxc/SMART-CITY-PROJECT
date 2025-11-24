@@ -1,3 +1,0 @@
-.When an equipment is turned on, store time_t in its structure.
-.When turned off, calculate duration = difftime(now, start_time) → multiply by conso_min to get total consumption.
-.Store in Consommation array.
