@@ -15,12 +15,10 @@ typedef struct{
 typedef struct{
     char rue[100];
     char ville[50];
-    char code_postal[10];
+    int code_postal;
 }Adresse;
 
 #endif
-
-
 
 // BATIMENTS
 
@@ -39,8 +37,8 @@ typedef struct{
 
 typedef struct {
     int id_batiment;                              
-    char nom_batiment[50];                       
-    char adresse[100];                  
+    char nom_batiment[50];                                       
+    Adresse adresse;                    
     int equipements[MAX_EQUIP_PAR_BATIMENT];  
     int nb_equipements;                  
 } Batiment;
@@ -150,6 +148,9 @@ void ajouterConsommation();
 void afficherConsommations();
 void trierConsommationsCroissant();
 void trierConsommationsDecroissant();
+// Versions utilisées dans Function.c
+void trierConsommationsAsc();
+void trierConsommationsDesc();
 
 
 #endif 
@@ -164,5 +165,10 @@ void trierConsommationsDecroissant();
 void allumerEquipement();
 void eteindreEquipement();
 void afficherEtatEquipements();
+
+// Menus et statistiques
+void statistiquesMenu();
+void statistiquesIntervalleTemps();
+void MenuDeTrie();
 
 #endif

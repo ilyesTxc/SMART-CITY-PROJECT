@@ -5,6 +5,9 @@
 #include "function.h"
 #include <time.h>
 
+// Forward declarations for internal helpers
+void enregistrerConsommationAuto(int idEquipement, time_t debut, time_t fin, float conso);
+
 Batiment batiments[MAX_BATIMENTS];
 int nbBatiments = 0;
 
@@ -20,8 +23,12 @@ void ajouterBatiment() {
     b.id_batiment = (nbBatiments == 0) ? 1 : batiments[nbBatiments - 1].id_batiment + 1;
     printf("Entrez le nom du bâtiment: ");
     scanf(" %[^\n]s", b.nom_batiment);
-    printf("Entrez l'adresse du bâtiment: ");
-    scanf(" %[^\n]s", b.adresse);
+        printf("Entrez la rue: ");
+        scanf(" %[^\n]s", b.adresse.rue);
+        printf("Entrez la ville: ");
+        scanf(" %[^\n]s", b.adresse.ville);
+        printf("Entrez le code postal: ");
+        scanf("%d", &b.adresse.code_postal);
     b.nb_equipements = 0;
 
     batiments[nbBatiments++] = b;
@@ -41,9 +48,13 @@ void modifierBatiment() {
             printf("Nom actuel: %s\n", batiments[i].nom_batiment);
             printf("Nouveau nom: ");
             scanf(" %[^\n]s", batiments[i].nom_batiment);
-            printf("Adresse actuelle: %s\n", batiments[i].adresse);
-            printf("Nouvelle adresse: ");
-            scanf(" %[^\n]s", batiments[i].adresse);
+            printf("Adresse actuelle: %s, %s %d\n", batiments[i].adresse.rue, batiments[i].adresse.ville, batiments[i].adresse.code_postal);
+            printf("Nouvelle rue: ");
+            scanf(" %[^\n]s", batiments[i].adresse.rue);
+            printf("Nouvelle ville: ");
+            scanf(" %[^\n]s", batiments[i].adresse.ville);
+            printf("Nouveau code postal: ");
+            scanf("%d", &batiments[i].adresse.code_postal);
             printf("Bâtiment modifié avec succès.\n");
             
             return;
@@ -77,8 +88,10 @@ void supprimerBatiment() {
 void afficherBatiments() {
     printf("\n=== Liste des bâtiments ===\n");
     for (int i = 0; i < nbBatiments; i++) {
-        printf("ID: %d | Nom: %s | Adresse: %s | Nb équipements: %d\n",
-               batiments[i].id_batiment, batiments[i].nom_batiment, batiments[i].adresse, batiments[i].nb_equipements);
+         printf("ID: %d | Nom: %s | Adresse: %s, %s %d | Nb équipements: %d\n",
+             batiments[i].id_batiment, batiments[i].nom_batiment,
+             batiments[i].adresse.rue, batiments[i].adresse.ville, batiments[i].adresse.code_postal,
+             batiments[i].nb_equipements);
     }
 }
 
@@ -202,6 +215,12 @@ void afficherEquipements() {
     }
 }
 
+// Gestion des équipements d'un bâtiment (simplifiée)
+void gererEquipementsBatiment() {
+    // Pour l'instant, redirige vers l'affichage par bâtiment
+    afficherEquipementsParBatiment();
+}
+
 TypeEquipement types[MAX_TYPES];
 int nbTypes = 0;
 
@@ -306,7 +325,7 @@ void eteindreEquipement() {
             time_t fin = time(NULL);
             double duree_min = difftime(fin, equipements[i].debut_utilisation)/60.0;
             float conso = duree_min * equipements[i].conso_min;
-            ajouterConsommation(equipements[i].id, equipements[i].debut_utilisation, fin, conso);
+            enregistrerConsommationAuto(equipements[i].id, equipements[i].debut_utilisation, fin, conso);
             equipements[i].etat = 0;
             printf("Équipement %s éteint. Consommation: %.2f\n", equipements[i].nom, conso);
             return;
@@ -324,7 +343,30 @@ void afficherEtatEquipements() {
 }
 
 
+// Déclarations anticipées des consommations pour les fonctions statistiques
+extern Consommation consommations[MAX_CONSOMMATIONS];
+extern int nbConsommations;
+
 // Statistiques 
+void statistiquesMenu(){
+
+    printf("\n=== STATISTIQUES DES CONSOMMATIONS ===\n");
+    printf("Consulter les statistiques sur un intervalle de temps(Y/N)\n");
+    char choix;
+    scanf(" %c",&choix);
+    while(choix != 'Y' && choix != 'N'){
+        printf("Choix invalide. Veuillez entrer Y ou N.\n");
+        scanf(" %c",&choix);
+    }
+
+    if(choix == 'Y'){
+        statistiquesIntervalleTemps();
+    }else{
+        printf("Au revoir !\n");
+    }
+}
+
+
 
 void statistiquesIntervalleTemps() {
     if (nbConsommations == 0) {
@@ -458,6 +500,22 @@ void ajouterConsommation() {
     printf("Consommation ajoutée pour l'équipement %d: %.2f\n", c.idEquipement, c.consommation);
 }
 
+// Enregistrement des Consommations
+
+void enregistrerConsommationAuto(int idEquipement, time_t debut, time_t fin, float conso) {
+    if (nbConsommations >= MAX_CONSOMMATIONS) {
+        printf("Nombre maximum de consommations atteint.\n");
+        return;
+    }
+    Consommation c;
+    c.id = (nbConsommations == 0) ? 1 : consommations[nbConsommations - 1].id + 1;
+    c.idEquipement = idEquipement;
+    c.debut = debut;
+    c.fin = fin;
+    c.consommation = conso;
+    consommations[nbConsommations++] = c;
+}
+
 
 // afficher consommations
 
@@ -479,8 +537,6 @@ void afficherConsommations() {
 // TRIER_LES_CONSOMMATIONS
 
 // Tri simple des consommations
-
-
 
 void trierConsommationsAsc() {
     if (nbConsommations < 2) return;
@@ -519,6 +575,46 @@ void trierConsommationsDesc() {
         }
     }
     printf("Consommations triées (descendant)\n");
+}
+
+
+
+// Menu de TRIE
+
+
+void MenuDeTrie() {
+    if (nbConsommations == 0) {
+        printf("Aucune consommation enregistrée.\n");
+        return;
+    }
+    int choix;
+    do {
+        printf("\n=== MENU TRI CONSOMMATIONS ===\n");
+        printf("1. Trier par ordre croissant\n");
+        printf("2. Trier par ordre décroissant\n");
+        printf("3. Afficher les consommations\n");
+        printf("0. Retour\n");
+        printf("Entrez votre choix: ");
+        if (scanf("%d", &choix) != 1) {
+            // entrée invalide
+            choix = 0;
+        }
+        switch (choix) {
+            case 1:
+                trierConsommationsAsc();
+                break;
+            case 2:
+                trierConsommationsDesc();
+                break;
+            case 3:
+                afficherConsommations();
+                break;
+            case 0:
+                break;
+            default:
+                printf("Choix invalide.\n");
+        }
+    } while (choix != 0);
 }
 
 
